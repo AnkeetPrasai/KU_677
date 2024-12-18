@@ -1,0 +1,8 @@
+Detected arithmetic instruction: %varT = add i32 1, 0
+Data flow updated: %varT <- 1
+Detected arithmetic instruction: %varF = add i32 2, 0
+Data flow updated: %varF <- 2
+Detected phi instruction: %var = phi i32 [%varT, %lbl_t], [%varF, %lbl_f]
+Destination: %var, Sources: %varT, %varF
+Data flow updated: %var <- 1
+No sensitive data flow detected.

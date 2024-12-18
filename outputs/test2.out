@@ -1,0 +1,22 @@
+Detected alloca instruction: %aVar = alloca i32
+Variable: %aVar, Type: i32
+Detected alloca instruction: %bVar = alloca i32
+Variable: %bVar, Type: i32
+Detected call instruction: %secret = call i32 () @SOURCE()
+Function: SOURCE, Argument: 
+Data flow updated: %secret <- SOURCE
+Detected store instruction: store i32 %secret, ptr %aVar
+Source: %secret, Destination: %aVar
+Data flow updated: %aVar <- SOURCE
+Detected load instruction: %a1 = load i32, ptr %aVar
+Source: %aVar, Destination: %a1
+Data flow updated: %a1 <- SOURCE
+Detected store instruction: store i32 %a1, ptr %bVar
+Source: %a1, Destination: %bVar
+Data flow updated: %bVar <- SOURCE
+Detected load instruction: %b1 = load i32, ptr %bVar
+Source: %bVar, Destination: %b1
+Data flow updated: %b1 <- SOURCE
+Detected call instruction: call void @SINK(i32 %b1)
+Function: SINK, Argument: %b1
+Sensitive data flow detected.

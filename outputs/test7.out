@@ -1,0 +1,19 @@
+Detected alloca instruction: %aVar = alloca i32
+Variable: %aVar, Type: i32
+Detected alloca instruction: %bVar = alloca i32
+Variable: %bVar, Type: i32
+Detected call instruction: %secret = call i32 () @SOURCE()
+Function: SOURCE, Argument: 
+Data flow updated: %secret <- SOURCE
+Detected phi instruction: %phiVar = phi i32 [%secret, %entry], [0, %merge]
+Destination: %phiVar, Sources: %secret
+Data flow updated: %phiVar <- SOURCE
+Detected store instruction: store i32 %phiVar, ptr %bVar
+Source: %phiVar, Destination: %bVar
+Data flow updated: %bVar <- SOURCE
+Detected load instruction: %b1 = load i32, ptr %bVar
+Source: %bVar, Destination: %b1
+Data flow updated: %b1 <- SOURCE
+Detected call instruction: call void @SINK(i32 %b1)
+Function: SINK, Argument: %b1
+Sensitive data flow detected.
