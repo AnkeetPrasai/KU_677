@@ -10,6 +10,8 @@ class BasicBlock:
 
 def get_origin(var, data_flow):
     if var in data_flow:
+        if data_flow[var] == var:
+            return var
         origin = get_origin(data_flow[var], data_flow)
         return origin
     return var
@@ -22,6 +24,10 @@ def main(input_file):
     has_flow = False
     current_func_name = ""
     current_block = ""
+    true_block = ""
+    in_true_block = False
+    false_block = ""
+    in_false_block = False
 
     with open(input_file, 'r') as f:
         for line in f:
@@ -39,7 +45,14 @@ def main(input_file):
                     blocks.append(BasicBlock(current_block))
                     block_counter += 1
             elif line.endswith(":"):
+                in_true_block = False
+                in_false_block = False
                 current_block = line[:-1]
+                print("Current Block: ",current_block, "True Block: ", true_block, "False Block: ", false_block)
+                if (current_block == true_block):
+                    in_true_block = True
+                if (current_block == false_block):
+                    in_false_block = True
                 block_map[current_block] = block_counter
                 blocks.append(BasicBlock(current_block))
                 block_counter += 1
@@ -51,8 +64,19 @@ def main(input_file):
                     print(f"Detected store instruction: {line}")
                     print(f"Source: {src}, Destination: {dest}")
                     origin = get_origin(src, data_flow)
-                    data_flow[dest] = origin
-                    print(f"Data flow updated: {dest} <- {origin}")
+                    if(in_true_block or in_false_block):
+                        print("IN TRUE OR FALSE BLOCK", dest, data_flow)
+                        destOrigin = get_origin(dest, data_flow)
+                        print(f"Destination origin: {destOrigin}")
+                        if(destOrigin == "SOURCE"):
+                            print(f"Data flow unchanged: {dest} <- {origin}")
+                        else:
+                            data_flow[dest] = origin
+                            print(f"Data flow updated: {dest} <- {origin}")
+                    else:
+                        origin = get_origin(src, data_flow)
+                        data_flow[dest] = origin
+                        print(f"Data flow updated: {dest} <- {origin}")
             elif "load" in line:
                 # Example: %a1 = load i32, ptr %aVar
                 match = re.match(r'(%\w+)\s*=\s*load\s+\w+, ptr\s+(%\w+)', line)
@@ -87,7 +111,7 @@ def main(input_file):
                         data_flow[dest] = "SOURCE"
                         print(f"Data flow updated: {dest} <- SOURCE")
                     else:
-                        # If operand1 is a variable, use its origin; else use the constant
+                        # If operand1 is a constant, prefer it; else use origin1
                         if operand1.startswith('%'):
                             data_flow[dest] = origin1
                             print(f"Data flow updated: {dest} <- {origin1}")
@@ -124,13 +148,19 @@ def main(input_file):
                             if origin == "SOURCE":
                                 has_flow = True
             elif "phi" in line:
-                # Example: %var = phi i32 [42, %branch2], [%secret, %branch1]
-                match = re.match(r'(%\w+)\s*=\s*phi\s+\w+\s+(.+)', line)
+                # Example: %var = phi i32 [%varT, %lbl_t], [%varF, %lbl_f]
+                # Example: %var = phi i32 [0, %lbl_t], [%varF, %lbl_f]
+                match = re.match(r'(%\w+)\s*=\s*phi\s+\w+\s+\[(%\w+|\d+),\s*%(\w+)\](?:,\s+\[(%\w+|\d+),\s*%(\w+)\])?', line)
                 if match:
                     dest = match.group(1)
-                    sources_str = match.group(2)
-                    sources = re.findall(r'\[([\w%]+),\s*%[\w]+\]', sources_str)
-                    origins = [get_origin(src, data_flow) for src in sources]
+                    sources = []
+                    if match.group(2):
+                        sources.append(match.group(2))
+                    if match.group(4):
+                        sources.append(match.group(4))
+                    constants = [src for src in sources if not src.startswith('%')]
+                    origins = [get_origin(src, data_flow) for src in sources if src.startswith('%')]
+                    origins.append(constants)
                     print(f"Detected phi instruction: {line}")
                     print(f"Destination: {dest}, Sources: {', '.join(sources)}")
                     if "SOURCE" in origins:
@@ -138,6 +168,15 @@ def main(input_file):
                     else:
                         data_flow[dest] = origins[0] if origins else dest
                     print(f"Data flow updated: {dest} <- {data_flow[dest]}")
+            elif "br" in line and "br label" not in line:
+                # Example: br i1 %cmp, label %lbl_t, label %lbl_f
+                match = re.match(r'br\s+\w+\s+(%\w+),\s+label\s+(%\w+),\s+label\s+(%\w+)', line)
+                if match:
+                    condition, label_true, label_false = match.groups()
+                    print(f"Detected branch instruction: {line}")
+                    print(f"Condition: {condition}, Labels: {label_true}, {label_false}")
+                    true_block = label_true[1:]
+                    false_block = label_false[1:]
 
     if has_flow:
         print("Sensitive data flow detected.")

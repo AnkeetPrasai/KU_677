@@ -6,12 +6,18 @@ Data flow updated: %aVar <- 0
 Detected load instruction: %a1 = load i32, ptr %aVar
 Source: %aVar, Destination: %a1
 Data flow updated: %a1 <- 0
+Detected branch instruction: br i1 %ifTruth, label %ifBody, label %afterIf
+Condition: %ifTruth, Labels: %ifBody, %afterIf
+Current Block:  ifBody True Block:  ifBody False Block:  afterIf
 Detected call instruction: %secret = call i32 (...) @SOURCE()
 Function: SOURCE, Argument: 
 Data flow updated: %secret <- SOURCE
 Detected store instruction: store i32 %secret, ptr %aVar
 Source: %secret, Destination: %aVar
+IN TRUE OR FALSE BLOCK %aVar {'%aVar': '0', '%a1': '0', '%secret': 'SOURCE'}
+Destination origin: 0
 Data flow updated: %aVar <- SOURCE
+Current Block:  afterIf True Block:  ifBody False Block:  afterIf
 Detected load instruction: %a2 = load i32, ptr %aVar
 Source: %aVar, Destination: %a2
 Data flow updated: %a2 <- SOURCE

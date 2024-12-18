@@ -1,3 +1,4 @@
+Current Block:  entry True Block:   False Block:  
 Detected alloca instruction: %aVar = alloca i32
 Variable: %aVar, Type: i32
 Detected alloca instruction: %bVar = alloca i32
@@ -5,12 +6,21 @@ Variable: %bVar, Type: i32
 Detected call instruction: %secret = call i32 () @SOURCE()
 Function: SOURCE, Argument: 
 Data flow updated: %secret <- SOURCE
+Detected branch instruction: br i1 %cond, label %branch1, label %branch2
+Condition: %cond, Labels: %branch1, %branch2
+Current Block:  branch1 True Block:  branch1 False Block:  branch2
 Detected store instruction: store i32 %secret, ptr %aVar
 Source: %secret, Destination: %aVar
+IN TRUE OR FALSE BLOCK %aVar {'%aVar': '%aVar', '%bVar': '%bVar', '%secret': 'SOURCE'}
+Destination origin: %aVar
 Data flow updated: %aVar <- SOURCE
+Current Block:  branch2 True Block:  branch1 False Block:  branch2
 Detected store instruction: store i32 42, ptr %aVar
 Source: 42, Destination: %aVar
-Data flow updated: %aVar <- 42
+IN TRUE OR FALSE BLOCK %aVar {'%aVar': 'SOURCE', '%bVar': '%bVar', '%secret': 'SOURCE'}
+Destination origin: SOURCE
+Data flow unchanged: %aVar <- 42
+Current Block:  merge True Block:  branch1 False Block:  branch2
 Detected phi instruction: %phiVar = phi i32 [42, %branch2], [%secret, %branch1]
 Destination: %phiVar, Sources: 42, %secret
 Data flow updated: %phiVar <- SOURCE

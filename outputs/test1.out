@@ -1,7 +1,12 @@
+Detected branch instruction: br i1 %noArgs, label %lbl_t, label %lbl_f
+Condition: %noArgs, Labels: %lbl_t, %lbl_f
+Current Block:  lbl_t True Block:  lbl_t False Block:  lbl_f
 Detected arithmetic instruction: %varT = add i32 1, 0
 Data flow updated: %varT <- 1
+Current Block:  lbl_f True Block:  lbl_t False Block:  lbl_f
 Detected arithmetic instruction: %varF = add i32 2, 0
 Data flow updated: %varF <- 2
+Current Block:  end True Block:  lbl_t False Block:  lbl_f
 Detected phi instruction: %var = phi i32 [%varT, %lbl_t], [%varF, %lbl_f]
 Destination: %var, Sources: %varT, %varF
 Data flow updated: %var <- 1

@@ -1,3 +1,4 @@
+Current Block:  entry True Block:   False Block:  
 Detected alloca instruction: %aVar = alloca i32
 Variable: %aVar, Type: i32
 Detected call instruction: %secret = call i32 () @SOURCE()
@@ -6,12 +7,19 @@ Data flow updated: %secret <- SOURCE
 Detected store instruction: store i32 %secret, ptr %aVar
 Source: %secret, Destination: %aVar
 Data flow updated: %aVar <- SOURCE
+Detected branch instruction: br i1 %cond, label %ifTrue, label %ifFalse
+Condition: %cond, Labels: %ifTrue, %ifFalse
+Current Block:  ifTrue True Block:  ifTrue False Block:  ifFalse
 Detected store instruction: store i32 42, ptr %aVar
 Source: 42, Destination: %aVar
-Data flow updated: %aVar <- 42
+IN TRUE OR FALSE BLOCK %aVar {'%aVar': 'SOURCE', '%secret': 'SOURCE'}
+Destination origin: SOURCE
+Data flow unchanged: %aVar <- 42
+Current Block:  ifFalse True Block:  ifTrue False Block:  ifFalse
+Current Block:  end True Block:  ifTrue False Block:  ifFalse
 Detected load instruction: %a1 = load i32, ptr %aVar
 Source: %aVar, Destination: %a1
-Data flow updated: %a1 <- 42
+Data flow updated: %a1 <- SOURCE
 Detected call instruction: call void @SINK(i32 %a1)
 Function: SINK, Argument: %a1
-No sensitive data flow detected.
+Sensitive data flow detected.

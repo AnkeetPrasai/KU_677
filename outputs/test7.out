@@ -1,3 +1,4 @@
+Current Block:  entry True Block:   False Block:  
 Detected alloca instruction: %aVar = alloca i32
 Variable: %aVar, Type: i32
 Detected alloca instruction: %bVar = alloca i32
@@ -5,6 +6,7 @@ Variable: %bVar, Type: i32
 Detected call instruction: %secret = call i32 () @SOURCE()
 Function: SOURCE, Argument: 
 Data flow updated: %secret <- SOURCE
+Current Block:  merge True Block:   False Block:  
 Detected phi instruction: %phiVar = phi i32 [%secret, %entry], [0, %merge]
 Destination: %phiVar, Sources: %secret, 0
 Data flow updated: %phiVar <- SOURCE
