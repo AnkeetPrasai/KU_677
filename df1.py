@@ -87,7 +87,7 @@ def main(input_file):
                         data_flow[dest] = "SOURCE"
                         print(f"Data flow updated: {dest} <- SOURCE")
                     else:
-                        # If operand1 is a constant, prefer it; else use origin1
+                        # If operand1 is a variable, use its origin; else use the constant
                         if operand1.startswith('%'):
                             data_flow[dest] = origin1
                             print(f"Data flow updated: {dest} <- {origin1}")
@@ -124,15 +124,12 @@ def main(input_file):
                             if origin == "SOURCE":
                                 has_flow = True
             elif "phi" in line:
-                # Example: %var = phi i32 [%varT, %lbl_t], [%varF, %lbl_f]
-                match = re.match(r'(%\w+)\s*=\s*phi\s+\w+\s+\[(%\w+),\s*%(\w+)\](?:,\s+\[(%\w+),\s*%(\w+)\])?', line)
+                # Example: %var = phi i32 [42, %branch2], [%secret, %branch1]
+                match = re.match(r'(%\w+)\s*=\s*phi\s+\w+\s+(.+)', line)
                 if match:
                     dest = match.group(1)
-                    sources = []
-                    if match.group(2):
-                        sources.append(match.group(2))
-                    if match.group(4):
-                        sources.append(match.group(4))
+                    sources_str = match.group(2)
+                    sources = re.findall(r'\[([\w%]+),\s*%[\w]+\]', sources_str)
                     origins = [get_origin(src, data_flow) for src in sources]
                     print(f"Detected phi instruction: {line}")
                     print(f"Destination: {dest}, Sources: {', '.join(sources)}")

@@ -11,12 +11,15 @@ Data flow updated: %aVar <- SOURCE
 Detected store instruction: store i32 42, ptr %aVar
 Source: 42, Destination: %aVar
 Data flow updated: %aVar <- 42
+Detected phi instruction: %phiVar = phi i32 [42, %branch2], [%secret, %branch1]
+Destination: %phiVar, Sources: 42, %secret
+Data flow updated: %phiVar <- SOURCE
 Detected store instruction: store i32 %phiVar, ptr %bVar
 Source: %phiVar, Destination: %bVar
-Data flow updated: %bVar <- %phiVar
+Data flow updated: %bVar <- SOURCE
 Detected load instruction: %b1 = load i32, ptr %bVar
 Source: %bVar, Destination: %b1
-Data flow updated: %b1 <- %phiVar
+Data flow updated: %b1 <- SOURCE
 Detected call instruction: call void @SINK(i32 %b1)
 Function: SINK, Argument: %b1
-No sensitive data flow detected.
+Sensitive data flow detected.

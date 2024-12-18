@@ -6,7 +6,7 @@ Detected call instruction: %secret = call i32 () @SOURCE()
 Function: SOURCE, Argument: 
 Data flow updated: %secret <- SOURCE
 Detected phi instruction: %phiVar = phi i32 [%secret, %entry], [0, %merge]
-Destination: %phiVar, Sources: %secret
+Destination: %phiVar, Sources: %secret, 0
 Data flow updated: %phiVar <- SOURCE
 Detected store instruction: store i32 %phiVar, ptr %bVar
 Source: %phiVar, Destination: %bVar

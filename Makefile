@@ -2,7 +2,7 @@
 
 # Variables
 PYTHON = python3
-SCRIPT = df.py
+SCRIPT = df1.py
 TESTS = test1.ll test2.ll test3.ll test4.ll test5.ll test6.ll test7.ll test8.ll
 OUTS = $(addprefix outputs/, $(TESTS:.ll=.out))
 
